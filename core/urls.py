@@ -1,12 +1,14 @@
 from django.urls import path
-from .views import register, inventory, update_food_item, delete_food_item, profile, export_food_items_csv, export_food_items_pdf
+from . import views
+
 
 urlpatterns = [
-    path('register/', register, name='register'),
-    path('inventory/', inventory, name='inventory'),
-    path('inventory/update/<int:pk>/', update_food_item, name='update_food_item'),
-    path('inventory/delete/<int:pk>/', delete_food_item, name='delete_food_item'),
-    path('profile/', profile, name='profile'),
-    path('inventory/export/csv/', export_food_items_csv, name='export_food_items_csv'),
-    path('inventory/export/pdf/', export_food_items_pdf, name='export_food_items_pdf'),
+      path('register/', views.register, name='register'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('food_items/', views.food_item_list, name='food_item_list'),
+    path('add_food_item/', views.add_food_item, name='add_food_item'),
+    path('recipes/', views.recipe_list, name='recipe_list'),
+    path('add_recipe/', views.add_recipe, name='add_recipe'),
 ]
