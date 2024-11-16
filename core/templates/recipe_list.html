@@ -1,0 +1,10 @@
+{% extends 'base.html' %} {% block title %}Recipes - EcoEats{% endblock %}
+{% block content %}
+<h2>Recipes</h2>
+<a href="{% url 'add_recipe' %}">Add New Recipe</a>
+<ul>
+  {% for recipe in recipes %}
+  <li>{{ recipe.title }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %} {% block title %}Dashboard - EcoEats{% endblock %}
+{% block content %}
+<h2>Welcome, {{ user.username }}!</h2>
+
+<h3>Your Food Items:</h3>
+<ul>
+  {% for food_item in food_items %}
+  <li>{{ food_item.name }} (Expiring: {{ food_item.expiration_date }})</li>
+  {% empty %}
+  <li>No food items found.</li>
+  {% endfor %}
+</ul>
+
+<h3>Your Recipes:</h3>
+<ul>
+  {% for recipe in recipes %}
+  <li>{{ recipe.title }}</li>
+  {% empty %}
+  <li>No recipes found.</li>
+  {% endfor %}
+</ul>
+{% endblock %}
