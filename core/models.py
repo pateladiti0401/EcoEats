@@ -17,7 +17,6 @@ PRIORITY_LEVELS = [
     ('high', 'High'),
 ]
 
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     preferences = models.TextField(blank=True, null=True)
@@ -64,3 +63,13 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.food_item.name}"
+
+class UserActivity(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activities')
+    action = models.CharField(max_length=255)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.action} at {self.timestamp}"
+
+

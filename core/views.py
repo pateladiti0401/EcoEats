@@ -7,7 +7,7 @@ from django.views.generic import UpdateView, DeleteView
 
 from django.shortcuts import render, redirect
 from .forms import FoodItemForm, RecipeForm
-from .models import FoodItem, Recipe
+from .models import FoodItem, Recipe, UserActivity
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .spoonacular_service import get_recipes_by_ingredients, get_recipe_details
@@ -77,6 +77,8 @@ def add_food_item(request):
             food_item = form.save(commit=False)
             food_item.user = request.user
             food_item.save()
+            # Log the action
+            UserActivity.objects.create(user=request.user, action=f"Added food item: {food_item.name}")
             messages.success(request, 'Food Item added successfully!')
             return redirect('food_item_list')
     else:
@@ -89,6 +91,11 @@ class FoodItemUpdateView(UpdateView):
     form_class = FoodItemForm
     template_name = 'update_fooditem.html'
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        UserActivity.objects.create(user=self.request.user, action=f"Updated food item: {self.object.name}")
+        return response
+
     def get_success_url(self):
         return reverse_lazy('food_item_list')  # Redirect to the food item list page after updating
 
@@ -97,6 +104,11 @@ class FoodItemDeleteView(DeleteView):
     model = FoodItem
     template_name = 'fooditem_confirm_delete.html'
     success_url = reverse_lazy('food_item_list')  # Redirect to the food item list page after deleting
+
+    def delete(self, request, *args, **kwargs):
+        food_item = self.get_object()
+        UserActivity.objects.create(user=request.user, action=f"Deleted food item: {food_item.name}")
+        return super().delete(request, *args, **kwargs)
 
 @login_required(login_url='/login')
 def recipes(request):
@@ -137,6 +149,8 @@ def add_recipe(request):
             recipe = form.save(commit=False)
             recipe.user = request.user
             recipe.save()
+            # Log the action
+            UserActivity.objects.create(user=request.user, action=f"Added recipe: {recipe.title}")
             messages.success(request, 'Recipe added successfully!')
             return redirect('recipe_list')
     else:
@@ -171,3 +185,15 @@ def export_food_items(request):
 
     return response
 
+@login_required(login_url='/login')
+def user_history(request):
+    # Fetch activity logs
+    activities = UserActivity.objects.filter(user=request.user).order_by('-timestamp')[:3]
+
+    # Fetch visit history from session
+    visit_history = request.session.get('visit_history', [])
+
+    return render(request, 'user_history.html', {
+        'activities': activities,
+        'visit_history': visit_history,
+    })
