@@ -1,0 +1,42 @@
+# Python-related files
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+.pytest_cache
+*.coverage
+*.hypothesis
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Django-related files
+db.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+media/
+staticfiles/
+static/
+
+# IDE/editor specific files
+.vscode/
+.idea/
+*.swp
+
+# Environment variable files
+.env
+.env.*
+
+# System-specific files
+.DS_Store  # macOS specific
+Thumbs.db  # Windows specific
+
+# Backup files
+*.bak

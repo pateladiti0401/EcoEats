@@ -8,6 +8,7 @@ from .forms import FoodItemForm, RecipeForm
 from .models import FoodItem, Recipe
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .spoonacular_service import get_recipes_by_ingredients, get_recipe_details
 
 # Register view
 def register(request):
@@ -66,6 +67,32 @@ def add_food_item(request):
     return render(request, 'add_food_item.html', {'form': form})
 
 @login_required(login_url='/login')
+def recipes(request):
+    if request.method == "POST":
+        # Get selected food items from the form
+        selected_items = request.POST.getlist('selected_items')
+        if not selected_items:
+            return render(request, 'recipe_list.html', {'error': 'No items selected!', 'recipes': []})
+
+        ingredients = ",".join(selected_items)
+
+        # Call the Spoonacular API to fetch recipes
+        recipe_results = get_recipes_by_ingredients(ingredients)
+        return render(request, 'recipe_results.html', {'recipes': recipe_results})
+
+    # Fetch the top 10 food items nearing expiry
+    food_items = FoodItem.objects.filter(expiration_date__isnull=False).order_by('expiration_date')[:10]
+    return render(request, 'recipe_list.html', {'food_items': food_items})
+
+@login_required(login_url='/login')
+def recipe_detail(request, recipe_id):
+    recipe = get_recipe_details(recipe_id)
+    if recipe:
+        return render(request, 'recipe_details.html', {'recipe': recipe})
+    else:
+        return render(request, 'recipe_details.html', {'error': 'Recipe details not found.'})
+
+@login_required
 def recipe_list(request):
     recipes = request.user.recipes.all()
     return render(request, 'recipe_list.html', {'recipes': recipes})

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ recipe.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ recipe.title }}</h2>
+<img src="{{ recipe.image }}" alt="{{ recipe.title }}" width="300">
+<h3>Ingredients:</h3>
+<ul>
+    {% for ingredient in recipe.ingredients %}
+    <li>{{ ingredient.name }} ({{ ingredient.amount }} {{ ingredient.unit }})</li>
+    {% endfor %}
+</ul>
+
+<h3>Instructions:</h3>
+<p>{{ recipe.instructions }}</p>
+
+<a href="{{ recipe.sourceUrl }}" target="_blank">View Full Recipe on Source</a>
+
+{% if error %}
+    <p style="color: red;">{{ error }}</p>
+{% endif %}
+{% endblock %}
