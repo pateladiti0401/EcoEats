@@ -11,6 +11,8 @@ from .models import FoodItem, Recipe
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .spoonacular_service import get_recipes_by_ingredients, get_recipe_details
+import csv
+from django.http import HttpResponse
 
 # Register view
 def register(request):
@@ -50,9 +52,22 @@ def dashboard(request):
     return render(request, 'dashboard.html', {'food_items': food_items, 'recipes': recipes})
 
 @login_required(login_url='/login')
+# def food_item_list(request):
+#     food_items = request.user.food_items.all()
+#     return render(request, 'food_item_list.html', {'food_items': food_items})
+
 def food_item_list(request):
-    food_items = request.user.food_items.all()
-    return render(request, 'food_item_list.html', {'food_items': food_items})
+    food_items = FoodItem.objects.all()
+
+    categorized_food_items = {}
+    for food_item in food_items:
+        if food_item.category not in categorized_food_items:
+            categorized_food_items[food_item.category] = []
+        categorized_food_items[food_item.category].append(food_item)
+
+    return render(request, 'food_item_list.html', {
+        'categorized_food_items': categorized_food_items
+    })
 
 @login_required(login_url='/login')
 def add_food_item(request):
@@ -127,3 +142,32 @@ def add_recipe(request):
     else:
         form = RecipeForm()
     return render(request, 'add_recipe.html', {'form': form})
+
+def export_food_items(request):
+    food_items = FoodItem.objects.all()
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="food_items.csv"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(['ID', 'Name', 'Description', 'Category', 'Quantity', 'Expiration Date', 'Priority', 'Refrigerated', 'Added On'])
+
+    # Write the data rows
+    for food_item in food_items:
+        formatted_expiration_date = food_item.expiration_date.strftime('%Y-%m-%d')
+        
+        writer.writerow([
+            food_item.id, 
+            food_item.name, 
+            food_item.description, 
+            food_item.get_category_display(),  # For human-readable category name
+            food_item.quantity, 
+            formatted_expiration_date,  # Use formatted date
+            food_item.get_priority_display(),  # For human-readable priority name
+            'Yes' if food_item.refrigerated else 'No',  # For boolean to human-readable
+            food_item.added_on.strftime('%Y-%m-%d %H:%M:%S')  # Format added_on as a datetime string
+        ])
+
+    return response
+

@@ -4,20 +4,32 @@
 
 {% block content %}
 <h2>Food Items</h2>
-<a class="button" href="/add-food-item">Add Food Item</a>
+<a class="button" href="/add_food_item">Add Food Item</a>
 
-<form method="GET" action="/food-items" class="search-form">
+<form method="GET" action="/food_items" class="search-form">
     <input type="text" name="query" placeholder="Search Food Items...">
     <button type="submit">Search</button>
 </form>
-
+<a href="{% url 'export_food_items' %}" class="button">Export to CSV</a>
 <div class="categories">
     {% for category, items in categorized_food_items.items %}
     <div class="category-card">
         <h4>{{ category }}</h4>
         <ul>
             {% for item in items %}
-            <li>{{ item.name }} - Expires: {{ item.expiration_date }}</li>
+            <li>
+              <strong>Name:</strong> {{ item.name }} <br>
+              <strong>Description:</strong> {{ item.description }} <br>
+              <strong>Category:</strong> {{ item.get_category_display }} <br>
+              <strong>Quantity:</strong> {{ item.quantity }} <br>
+              <strong>Expiration Date:</strong> {{ item.expiration_date }} <br>
+              <strong>Priority:</strong> {{ item.get_priority_display }} <br>
+              <strong>Refrigerated:</strong> {{ item.refrigerated|yesno:"Yes,No" }} <br>
+              <strong>Added On:</strong> {{ item.added_on }} <br>
+              <a href="{% url 'food_item_update' item.pk %}">Edit</a> | 
+              <a href="{% url 'food_item_delete' item.pk %}">Delete</a>    
+          </li>
+          <hr>
             {% endfor %}
         </ul>
     </div>
