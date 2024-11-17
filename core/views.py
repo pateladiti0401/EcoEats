@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib import messages
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView, DeleteView
 
 from django.shortcuts import render, redirect
 from .forms import FoodItemForm, RecipeForm
@@ -65,6 +67,21 @@ def add_food_item(request):
     else:
         form = FoodItemForm()
     return render(request, 'add_food_item.html', {'form': form})
+
+# Update View for Food Item
+class FoodItemUpdateView(UpdateView):
+    model = FoodItem
+    form_class = FoodItemForm
+    template_name = 'update_fooditem.html'
+
+    def get_success_url(self):
+        return reverse_lazy('food_item_list')  # Redirect to the food item list page after updating
+
+# Delete View for Food Item
+class FoodItemDeleteView(DeleteView):
+    model = FoodItem
+    template_name = 'fooditem_confirm_delete.html'
+    success_url = reverse_lazy('food_item_list')  # Redirect to the food item list page after deleting
 
 @login_required(login_url='/login')
 def recipes(request):
