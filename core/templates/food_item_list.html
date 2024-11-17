@@ -1,10 +1,26 @@
-{% extends 'base.html' %} {% block title %}Food Items - EcoEats{% endblock %}
+{% extends 'base.html' %}
+
+{% block title %}Food Items - EcoEats{% endblock %}
+
 {% block content %}
 <h2>Food Items</h2>
-<a href="{% url 'add_food_item' %}">Add New Food Item</a>
-<ul>
-  {% for food_item in food_items %}
-  <li>{{ food_item.name }} - Expiration: {{ food_item.expiration_date }}</li>
-  {% endfor %}
-</ul>
+<a class="button" href="/add-food-item">Add Food Item</a>
+
+<form method="GET" action="/food-items" class="search-form">
+    <input type="text" name="query" placeholder="Search Food Items...">
+    <button type="submit">Search</button>
+</form>
+
+<div class="categories">
+    {% for category, items in categorized_food_items.items %}
+    <div class="category-card">
+        <h4>{{ category }}</h4>
+        <ul>
+            {% for item in items %}
+            <li>{{ item.name }} - Expires: {{ item.expiration_date }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

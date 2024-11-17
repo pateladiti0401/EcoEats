@@ -1,22 +1,53 @@
-{% extends 'base.html' %} {% block title %}Dashboard - EcoEats{% endblock %}
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - EcoEats{% endblock %}
+
 {% block content %}
-<h2>Welcome, {{ user.username }}!</h2>
+<section class="dashboard">
+    <h2 class="dashboard-title">Welcome Back, {{ user.username }}!</h2>
 
-<h3>Your Food Items:</h3>
-<ul>
-  {% for food_item in food_items %}
-  <li>{{ food_item.name }} (Expiring: {{ food_item.expiration_date }})</li>
-  {% empty %}
-  <li>No food items found.</li>
-  {% endfor %}
-</ul>
+    <!-- Stats Overview -->
+    <div class="grid stats-overview">
+        <div class="card">
+            <h3>Total Food Items</h3>
+            <p class="number">{{ food_items|length }}</p>
+            <a href="/food_items">Manage Food Items</a>
+        </div>
+        <div class="card">
+            <h3>Total Recipes</h3>
+            <p class="number">{{ recipes|length }}</p>
+            <a href="/recipes">Manage Recipes</a>
+        </div>
+        <div class="card">
+            <h3>Expiring Soon</h3>
+            <p class="number">{{ expiring_soon|length }}</p>
+            <a href="#expiring-section">See Details</a>
+        </div>
+    </div>
 
-<h3>Your Recipes:</h3>
-<ul>
-  {% for recipe in recipes %}
-  <li>{{ recipe.title }}</li>
-  {% empty %}
-  <li>No recipes found.</li>
-  {% endfor %}
-</ul>
+    <!-- Expiring Soon Section -->
+    <h3 id="expiring-section">Expiring Soon</h3>
+    <div class="grid expiring-list">
+        {% for food_item in expiring_soon %}
+        <div class="expiring-card">
+            <h4>{{ food_item.name }}</h4>
+            <p>Expires: <strong>{{ food_item.expiration_date }}</strong></p>
+        </div>
+        {% empty %}
+        <p>No food items are expiring soon. You're on top of things!</p>
+        {% endfor %}
+    </div>
+
+    <!-- Categories Section -->
+    <h3>Categories</h3>
+    <div class="grid category-section">
+        {% for category, items in categorized_food_items.items %}
+        <div class="category-card">
+            <h4>{{ category }}</h4>
+            <p>{{ items|length }} items</p>
+            <a href="/food-items?category={{ category }}">View {{ category }}</a>
+        </div>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}

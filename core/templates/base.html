@@ -1,34 +1,28 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}EcoEats{% endblock %}</title>
-    <!-- Include your CSS or external links here -->
-  </head>
-  <body>
-    <!-- Add your navigation bar or header here -->
-    <header>
-      <nav>
-        <ul>
-          <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-          <li><a href="{% url 'food_item_list' %}">Food Items</a></li>
-          <li><a href="{% url 'recipe_list' %}">Recipes</a></li>
-          <li><a href="{% url 'logout' %}">Logout</a></li>
-          <li><a href="{% url 'login' %}">Login</a></li>
-          <li><a href="{% url 'register' %}">Register</a></li>
-        </ul>
-      </nav>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <h1>EcoEats</h1>
+        <nav>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/recipes">Recipes</a>
+            <a href="/food-items">Food Items</a>
+            <a href="/logout">Logout</a>
+        </nav>
     </header>
-
     <main>
-      <!-- The content of each page will be injected here -->
-      {% block content %} {% endblock %}
+        {% block content %}
+        {% endblock %}
     </main>
-
-    <!-- Add your footer here (optional) -->
     <footer>
-      <p>&copy; 2024 EcoEats</p>
+        <p>EcoEats &copy; 2024</p>
     </footer>
-  </body>
+</body>
 </html>

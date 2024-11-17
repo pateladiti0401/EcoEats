@@ -40,18 +40,18 @@ def logout_view(request):
     return redirect('login')
 
 
-@login_required
+@login_required(login_url='/login')
 def dashboard(request):
     food_items = request.user.food_items.all()
     recipes = request.user.recipes.all()
     return render(request, 'dashboard.html', {'food_items': food_items, 'recipes': recipes})
 
-@login_required
+@login_required(login_url='/login')
 def food_item_list(request):
     food_items = request.user.food_items.all()
     return render(request, 'food_item_list.html', {'food_items': food_items})
 
-@login_required
+@login_required(login_url='/login')
 def add_food_item(request):
     if request.method == "POST":
         form = FoodItemForm(request.POST)
@@ -65,12 +65,12 @@ def add_food_item(request):
         form = FoodItemForm()
     return render(request, 'add_food_item.html', {'form': form})
 
-@login_required
+@login_required(login_url='/login')
 def recipe_list(request):
     recipes = request.user.recipes.all()
     return render(request, 'recipe_list.html', {'recipes': recipes})
 
-@login_required
+@login_required(login_url='/login')
 def add_recipe(request):
     if request.method == "POST":
         form = RecipeForm(request.POST)
